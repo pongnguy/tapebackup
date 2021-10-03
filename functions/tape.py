@@ -56,19 +56,19 @@ class Tape:
             print(f"Whitelisted Tapes ({len(self.config['lto-whitelist'])}): {self.config['lto-whitelist']}")
 
         full = []
-        for i in database.get_full_tapes(self.session):
+        for t in database.get_full_tapes(self.session):
             if lto_whitelist:
-                if i[0] not in self.config['lto-whitelist']:
+                if t.label not in self.config['lto-whitelist']:
                     continue
-            full.append(i.label)
+            full.append(t.label)
         print("")
-        print(f"Full tapes: {full}")
+        print(f"Full tapes ({len(full)}): {full}")
 
         print("")
-        print(f"Free tapes in library({len(tapes)}): {tapes}")
+        print(f"Free tapes in library ({len(tapes)}): {tapes}")
 
         print("")
-        print(f"Please remove following tapes from library ({len(tapes_to_remove)}): {tapes_to_remove}")
+        print(f"Full tapes in library (Could be removed) ({len(tapes_to_remove)}): {tapes_to_remove}")
 
     def filecount_from_verify_files_config(self, filelist):
         if "%" in self.config['verify-files']:
