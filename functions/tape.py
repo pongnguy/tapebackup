@@ -54,7 +54,7 @@ class Tape:
             print(f"Whitelisted Tapes ({len(self.config['lto-whitelist'])}): {self.config['lto-whitelist']}")
 
         full = []
-        for i in database.get_full_tapes():
+        for i in database.get_full_tapes(self.session):
             if lto_whitelist:
                 if i[0] not in self.config['lto-whitelist']:
                     continue
