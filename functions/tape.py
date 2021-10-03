@@ -49,8 +49,10 @@ class Tape:
             lto_whitelist = False
 
         if not lto_whitelist:
+            print('')
             print(f"Ignored Tapes ({len(self.config['lto-blacklist'])}): {self.config['lto-blacklist']}")
         else:
+            print('')
             print(f"Whitelisted Tapes ({len(self.config['lto-whitelist'])}): {self.config['lto-whitelist']}")
 
         full = []
@@ -58,7 +60,8 @@ class Tape:
             if lto_whitelist:
                 if i[0] not in self.config['lto-whitelist']:
                     continue
-            full.append(i[0])
+            full.append(i.label)
+        print("")
         print(f"Full tapes: {full}")
 
         print("")
