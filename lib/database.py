@@ -69,7 +69,7 @@ def insert_or_update_db_version(session, db_version):
         session.add(version)
 
     version.value = db_version
-    session.commit()
+    commit(session)
 
 
 def file_exists_by_path(session, relative_path):
@@ -92,7 +92,7 @@ def insert_file(session, filename, relative_path):
     """
     file = File(filename=filename, path=relative_path)
     session.add(file)
-    session.commit()
+    commit(session)
     return file
 
 
