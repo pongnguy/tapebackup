@@ -259,7 +259,12 @@ class Tape:
             logger.error(f"No free Tapes in Library, but you can remove these full ones: {tapes_to_remove}")
             return
 
-        next_tape = tapes.pop(0)
+        started_tape = database.get_started_tape(self.session)
+        if started_tape not in tapes:
+            next_tape = tapes.pop(0)
+        else:
+            next_tape = started_tape[0]
+
         logger.info(f"Using tape {next_tape} for writing")
         self.tapelibrary.load(next_tape)
         lto_version = self.tapelibrary.get_current_lto_version()

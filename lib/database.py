@@ -32,8 +32,9 @@ def create_session(engine):
 
 
 def db_model_version_need_update(engine, session, db_version):
+    connection = engine.connect()
     logger.debug("Check if database need upgrade")
-    if engine.dialect.has_table(engine, 'config'):
+    if engine.dialect.has_table(connection, 'config'):
         version = session.query(Config).filter(Config.name == 'version').first()
         if int(version.value) != db_version:
             logger.error(f"Database need manual upgrade, please run './main.py db upgrade' to upgrade from "
@@ -312,6 +313,10 @@ def get_end_of_data_by_tape(session, label):
 
 def get_files_by_tapelabel(session, label):
     return session.query(File).join(Tape).filter(Tape.label == label).all()
+
+
+def get_started_tape(session):
+    return session.query(Tape.label).filter(Tape.full.is_(False)).first()
 
 
 def revert_written_to_tape_by_label(session, label):
