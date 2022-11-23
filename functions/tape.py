@@ -249,7 +249,7 @@ class Tape:
         ## TODO: Write DATABASE and stuff to file, see tape_is_full_ltfs
         #database.mark_tape_as_full(self.session, tape, datetime.datetime.now(), len(files))
 
-    def write(self):
+    def write(self, delete_after_write=False):
         full = False
         tapes, tapes_to_remove = self.tapelibrary.get_tapes_tags_from_library(self.session)
         if len(tapes_to_remove) > 0:
@@ -258,6 +258,9 @@ class Tape:
         if len(tapes) == 0:
             logger.error(f"No free Tapes in Library, but you can remove these full ones: {tapes_to_remove}")
             return
+
+        if delete_after_write:
+            logger.info(f"Option delete-after-write is set, will delete encrypted files directly after writing to tape!")
 
         started_tape = database.get_started_tape(self.session)
         if started_tape not in tapes:
@@ -312,6 +315,12 @@ class Tape:
                     self.write_file_ltfs(file, free, next_tape, count, filecount)
                     count += 1
 
+                # Delete file if --delete-after-write is specified
+                if delete_after_write:
+                    if os.path.exists("{}/{}".format(self.config['local-enc-dir'], file.filename_encrypted)):
+                        logger.info(f"Deleting encrypted file: {file.filename_encrypted} ({file.filename})")
+                        os.remove("{}/{}".format(self.config['local-enc-dir'], file.filename_encrypted))
+
                 if self.interrupted:
                     break
 
@@ -363,6 +372,12 @@ class Tape:
                     else:
                         files_for_next_chunk.append(file)
                         files_next_chunk_size += file.filesize_encrypted
+
+                # Delete file if --delete-after-write is specified
+                if delete_after_write:
+                    if os.path.exists("{}/{}".format(self.config['local-enc-dir'], file.filename_encrypted)):
+                        logger.info(f"Deleting encrypted file: {file.filename_encrypted} ({file.filename})")
+                        os.remove("{}/{}".format(self.config['local-enc-dir'], file.filename_encrypted))
 
                 if self.interrupted:
                     break

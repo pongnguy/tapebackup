@@ -168,6 +168,8 @@ if __name__ == "__main__":
     subparser_encrypt = subparsers.add_parser('encrypt',
                                               help='Enrypt files and build directory for one tape media size')
     subparser_write = subparsers.add_parser('write', help='Write directory into')
+    subparser_write.add_argument("-d", "--delete-after-write", action="store_true",
+                                        help="Delete encrypted file directly after writing to tape to save space [Default: Deleting files after a tape is full and verified]")
 
     subparser_verify = subparsers.add_parser('verify', help='Verify Files (random or given filename) on Tape')
     subparser_verify_group = subparser_verify.add_mutually_exclusive_group(required=True)
@@ -301,7 +303,7 @@ if __name__ == "__main__":
 
         from functions.tape import Tape
         current_class = Tape(cfg, db_engine, tapelibrary, tools)
-        current_class.write()
+        current_class.write(delete_after_write=args.delete_after_write)
 
     elif args.command == "verify":
         logger.info("Starting verify operation, logging into logs/verify.log")
