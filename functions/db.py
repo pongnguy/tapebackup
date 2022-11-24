@@ -147,7 +147,10 @@ class Db:
             else:
                 written = False
             verified_count = file[17]
-            verified_last = file[18]
+            if file[18] is not None:
+                verified_last = datetime.datetime.fromtimestamp(int(file[18]))
+            else:
+                verified_last = None
             if file[19] == 1:
                 deleted = True
             else:
