@@ -390,7 +390,7 @@ class Tape:
                     f"space still avalable on tape.")
 
         if full:
-            self.write()
+            self.write(delete_after_write=delete_after_write)
 
         # Unmounting current tape if interrupted or no more data to write
         self.tapelibrary.unmount()
