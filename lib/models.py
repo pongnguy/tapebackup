@@ -44,8 +44,8 @@ class File(Base):
     deleted = Column(Boolean, default=False)
 
     file = relationship("File", remote_side=[id])
-    tape = relationship("Tape")
-    restoreJobFileMap = relationship("RestoreJobFileMap")
+    tape = relationship("Tape", back_populates="files")
+    restoreJobFileMap = relationship("RestoreJobFileMap", back_populates="file")
 
     def __repr__(self):
         return f'File object: {self.path}'
@@ -63,7 +63,7 @@ class Tape(Base):
     verified_count = Column(Integer, default=0)
     verified_last = Column(DateTime)
 
-    files = relationship("File")
+    files = relationship("File", back_populates="tape")
 
     def __repr__(self):
         return f'Tape object: {self.label}'
@@ -88,7 +88,7 @@ class RestoreJobFileMap(Base):
     file_id = Column(Integer, ForeignKey('file.id'), nullable=False)
     restore_job_id = Column(Integer, ForeignKey('restore_job.id'), nullable=False)
 
-    file = relationship("File")
+    file = relationship("File", back_populates="restoreJobFileMap")
     restore_job = relationship("RestoreJob")
 
     __table_args__ = (UniqueConstraint('file_id', 'restore_job_id'),)

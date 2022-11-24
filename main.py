@@ -422,7 +422,13 @@ if __name__ == "__main__":
         logger.info("Test 123")
 
         session = database.create_session(db_engine)
-        file = database.get_restore_job_stats_total(session, 1)
+        #file = database.get_restore_job_stats_total(session, 1)
+
+        from lib import models
+        get_foo = session.query(models.Tape).first()
+        get_foo2 = session.query(models.File).first()
+        print(get_foo)
+        print(get_foo2)
 
         ## For debugging / programming pruspose only
         #from functions.develop import Develop
