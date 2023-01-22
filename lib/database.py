@@ -8,6 +8,7 @@ from sqlalchemy import create_engine, func, or_, and_
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.serializer import dumps
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql.functions import concat
 from lib.models import Config, File, Tape, RestoreJob, RestoreJobFileMap
 
 logger = logging.getLogger()
@@ -241,13 +242,18 @@ def get_files_to_be_written(session):
     ).all()
 
 
-def get_not_deleted_files(session):
-    return session.query(File).filter(File.deleted.is_(False)).all()
+def get_not_deleted_files(session, base_path):
+    return_data = []
+    for tut in session.query(File.path).filter(File.deleted.is_(False)).all():
+        return_data.append(f"{base_path}/{tut[0]}")
+    return return_data
 
 
-def set_file_deleted(session, file):
+def set_file_deleted(session, filepath, base_path):
+    file = session.query(File).filter(File.path == filepath.replace(base_path, '').strip("/")).first()
     file.deleted = True
     commit(session)
+    return file.id
 
 
 def get_file_count(session):

@@ -139,26 +139,30 @@ class Files:
         """
         if given_file is not None:
             logger.info(f"Taking filelist from given file {given_file}")
-            result = self.get_remote_filelist_fom_file(given_file)
+            file_list = self.get_remote_filelist_fom_file(given_file)
             data_dir = self.config['remote-data-dir']
             base_dir = self.config['remote-base-dir']
         else:
             if self.local_files:
                 logger.info(f"Retrieving file list from server LOCAL directory "
                             f"{os.path.abspath(self.config['local-data-dir'])}")
-                result = self.tools.ls_recursive(os.path.abspath(self.config['local-data-dir']))
+                file_list = self.tools.ls_recursive(os.path.abspath(self.config['local-data-dir']))
                 data_dir = self.config['local-data-dir']
                 base_dir = self.config['local-base-dir']
             else:
-                result = self.get_remote_filelist()
+                file_list = self.get_remote_filelist()
                 data_dir = self.config['remote-data-dir']
                 base_dir = self.config['remote-base-dir']
 
-        file_count_total = len(result)
-        file_count_current = 0
-        logger.info(f"Found {file_count_total} entries. Start to process.")
+        db_file_list = database.get_not_deleted_files(self.session, base_dir)
+        new_files = list(set(file_list)-set(db_file_list))
+        deleted_files = list(set(db_file_list) - set(file_list))
+        self.skipped_count += len(file_list) - len(new_files)
 
-        for fpath in result:
+        logger.info(f"Found {len(file_list)} files. New: {len(new_files)}. Deleted: {len(deleted_files)}. Start to process...")
+
+        file_count_current = 0
+        for fpath in new_files:
             # Check if max-storage-size from config file is reached
             file_count_current += 1
             if self.tools.calculate_over_max_storage_usage(-1):
@@ -180,7 +184,7 @@ class Files:
                         next_thread = i
                         break
                 logger.info(f"Starting Thread #{next_thread}, processing "
-                            f"({file_count_current}/{file_count_total}): {fullpath}")
+                            f"({file_count_current}/{len(new_files)}): {fullpath}")
 
                 self.active_threads.append(next_thread)
                 x = threading.Thread(target=self.get_thread,
@@ -191,33 +195,24 @@ class Files:
                 while threading.active_count() > self.config['threads']['get']:
                     time.sleep(0.2)
 
-            else:
-                logger.debug(f"File already downloaded, skipping {relpath}")
-                self.skipped_count += 1
-
             if self.interrupted:
                 while threading.active_count() > 1:
                     time.sleep(1)
                 break
 
-        ## Detect deleted files
-        if not self.interrupted:
-            self.deleted_count = 0
-            files = database.get_not_deleted_files(self.session)
-            for file in files:
-                ## Only look for files in the data path (then you can still specify subfolder instead of syncing all)
-                if data_dir in f"{base_dir}/{file.path}":
-                    still_exists = False
-                    for fpath in result:
-                        if fpath.strip() == f"{base_dir}/{file.path}":
-                            still_exists = True
-                            break
+        while threading.active_count() > 1:
+            time.sleep(1)
 
-                    ## Set delete flag in database
-                    if not still_exists:
-                        logger.info(f"Set delete flag for file id: {file.id}")
-                        self.deleted_count += 1
-                        database.set_file_deleted(self.session, file)
+        ## Detect deleted files
+        for file in deleted_files:
+            if self.interrupted:
+                break
+            ## Only look for files in the data path (then you can still specify subfolder instead of syncing all)
+            if data_dir in file:
+                ## Set delete flag in database
+                self.deleted_count += 1
+                id = database.set_file_deleted(self.session, file, base_dir)
+                logger.info(f"Set delete flag for file: ID: {id}, filepath: {file}")
 
         logger.info(f"Processing finished: downloaded: {self.downloaded_count}, skipped (already downloaded): "
                     f"{self.skipped_count}, failed: {self.failed_count}, deleted: {self.deleted_count}")
