@@ -47,6 +47,9 @@ class Tapelibrary:
                     elif database.get_full_tape(session, tag) is not None:
                         logger.debug('Ignore Tag {} because exists in database and is full'.format(tag))
                         tags_to_remove_from_library.append(tag)
+                    elif tag.startswith('CLN'):
+                        logger.debug(f'Ignore cleaning tape: tag {tag}')
+                        pass
                     else:
                         tag_in_tapelib.append(tag)
                 else:
