@@ -3,9 +3,9 @@ import sqlite3
 import logging
 import sys
 import time
-from lib import database as new_db
+from tapebackup.lib import database as new_db
 from sqlalchemy.exc import IntegrityError
-from lib.models import Config, File, Tape, RestoreJob, RestoreJobFileMap
+from tapebackup.lib import Config, File, Tape, RestoreJob, RestoreJobFileMap
 from sqlite3 import Error
 
 logger = logging.getLogger()

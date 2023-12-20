@@ -1,9 +1,9 @@
 import logging
 import sys
 
-from lib import database
+from tapebackup.lib import database
 from functions.encryption import Encryption
-from lib.tools import Tools
+from tapebackup.lib import Tools
 
 logger = logging.getLogger()
 

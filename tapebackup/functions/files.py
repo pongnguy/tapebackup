@@ -6,9 +6,9 @@ import sys
 import subprocess
 import threading
 from tabulate import tabulate
-from lib import database
-from lib.tools import Tools
-from lib.models import File, Tape, RestoreJob, RestoreJobFileMap
+from tapebackup.lib import database
+from tapebackup.lib import Tools
+from tapebackup.lib import File, Tape, RestoreJob, RestoreJobFileMap
 
 logger = logging.getLogger()
 

@@ -5,7 +5,7 @@ import sys
 import os
 import time
 
-from lib import database
+from tapebackup.lib import database
 
 logger = logging.getLogger()
 

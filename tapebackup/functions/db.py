@@ -3,8 +3,8 @@ import logging
 import os
 import time
 import shutil
-from lib import database
-from lib.migrate import Migrate
+from tapebackup.lib import database
+from tapebackup.lib import Migrate
 logger = logging.getLogger()
 
 

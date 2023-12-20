@@ -4,7 +4,7 @@ import os
 import subprocess
 import sys
 
-from lib import database
+from tapebackup.lib import database
 
 logger = logging.getLogger()
 

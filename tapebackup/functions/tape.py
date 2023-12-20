@@ -6,7 +6,7 @@ import sys
 import time
 import random
 import shutil
-from lib import database
+from tapebackup.lib import database
 logger = logging.getLogger()
 
 

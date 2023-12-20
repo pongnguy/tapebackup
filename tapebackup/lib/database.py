@@ -9,7 +9,7 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.serializer import dumps
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql.functions import concat
-from lib.models import Config, File, Tape, RestoreJob, RestoreJobFileMap
+from tapebackup.lib import Config, File, Tape, RestoreJob, RestoreJobFileMap
 
 logger = logging.getLogger()
 

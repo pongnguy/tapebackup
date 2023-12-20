@@ -5,7 +5,7 @@ import os
 import sys
 import time
 import threading
-from lib import database
+from tapebackup.lib import database
 from pathlib import Path
 
 logger = logging.getLogger()
