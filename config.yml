@@ -31,7 +31,8 @@ database: "tapebackup.db"
 database-backup-git-path: "sql-backup"
 
 ## Remote server to sync data from
-remote-server: "sever.example.com"
+remote-server: "alexandria.diezcansecoramirez.com"
+remote-port: "28"
 
 ## Specify remote datadir and basedir
 ## basedir: will be stripped from remote-base-dir
