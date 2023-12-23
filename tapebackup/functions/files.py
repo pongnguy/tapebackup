@@ -37,7 +37,7 @@ class Files:
         time_started = time.time()
 
         logger.info(f"Retrieving file list from server {self.config['remote-server']} directory {self.config['remote-data-dir']}")
-        commands = ['ssh', self.config['remote-server'], f"find \"{self.config['remote-data-dir']}\" -type f"]
+        commands = ['ssh', f'-p {self.config["remote-port"]}', self.config['remote-server'], f"find \"{self.config['remote-data-dir']}\" -type f"]
         process = subprocess.Popen(commands, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         while True:
             output = process.stdout.readline().strip().decode("UTF-8")
@@ -90,7 +90,7 @@ class Files:
                 return False
 
             time_started = time.time()
-            command = ['rsync', '--protect-args', '-ae', 'ssh', f"{self.config['remote-server']}:{fullpath}",
+            command = ['rsync', '--protect-args', '-ae', 'ssh', f'-p {self.config["remote-port"]}', f"{self.config['remote-server']}:{fullpath}",
                        f"{self.config['local-data-dir']}/{directory}"]
             rsync = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setpgrp)
             if rsync.returncode == 0:
