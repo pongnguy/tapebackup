@@ -25,7 +25,7 @@ devices:
 enc-key: ""
 
 ## Database name
-database: "tapebackup.db"
+database: "/mnt/buttervolume/volumes/fvc/tapebackup.db"
 
 ## Path for database backup (SQL File into Git)
 database-backup-git-path: "sql-backup"
@@ -37,8 +37,8 @@ remote-port: "28"
 ## Specify remote datadir and basedir
 ## basedir: will be stripped from remote-base-dir
 ## remote data and base direcotry must be an absolute path
-remote-base-dir: "/mnt/bigDataStorage"
-remote-data-dir: "/mnt/bigDataStorage/Videos"
+remote-base-dir: "/mnt/buttervolume/volumes/bigDataStorage"
+remote-data-dir: "/mnt/buttervolume/volumes/bigDataStorage/datasets"
 
 ## Specify maximum storage usage o local side (local-data-dir + local-enc-dir + local-verify-dir)
 ##   - In order to run correctly it must be more than one lto tape size
